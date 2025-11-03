@@ -8,10 +8,8 @@ import sys
 def extract_text_from_page(page):
     text = page.get_text("text")
     return text
-def extract_text_from_image(pdf_path, page_num):
+def extract_text_from_image(images, page_num):
     try:
-        # Convert page to image
-        images = convert_from_path(pdf_path, first_page=page_num + 1, last_page=page_num + 1)
         if images:
             # OCR
             text = pytesseract.image_to_string(images[0])
@@ -22,9 +20,8 @@ def extract_text_from_image(pdf_path, page_num):
     except Exception as e:
         print(f"Error extracting text from image on page {page_num + 1}: {e}")
         return ""
-def save_page_as_image(pdf_path, page_num, image_output_folder, pdf_name):
+def save_page_as_image(images, page_num, image_output_folder, pdf_name):
     try:
-        images = convert_from_path(pdf_path, first_page=page_num + 1, last_page=page_num + 1)
         if images:
             image_filename = f"{pdf_name}_page_{page_num + 1}.png"
             image_path = os.path.join(image_output_folder, image_filename)
@@ -61,14 +58,15 @@ def extract_data_from_pdf(pdf_path, image_output_folder, min_text_length=100):
         else:
             # Option 2: OCR Extraction
             print(f"Page {page_num + 1}/{len(doc)}: Direct extraction insufficient, performing OCR...")
-            ocr_text = extract_text_from_image(pdf_path, page_num)
+            images = convert_from_path(pdf_path, first_page=page_num + 1, last_page=page_num + 1)
+            ocr_text = extract_text_from_image(images, page_num)
             if len(ocr_text.strip()) > min_text_length:
                 print(f"Page {page_num + 1}/{len(doc)}: Extracted text via OCR.")
                 full_text.append(ocr_text)
             else:
                 # Option 3: Save as Image
                 print(f"Page {page_num + 1}/{len(doc)}: OCR extraction insufficient, saving page as image.")
-                placeholder = save_page_as_image(pdf_path, page_num, image_output_folder, pdf_name)
+                placeholder = save_page_as_image(images, page_num, image_output_folder, pdf_name)
                 full_text.append(placeholder)
     doc.close()
     print("PDF text extraction completed.")
