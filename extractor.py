@@ -27,7 +27,7 @@ def save_page_as_image(images, page_num, image_output_folder, pdf_name):
             image_path = os.path.join(image_output_folder, image_filename)
             images[0].save(image_path, 'PNG')
             print(f"Saved page {page_num + 1} as image: {image_path} since it was non-processable.")
-            return f"{pdf_name} page {page_num + 1} is saved as image: {image_filename}]\n"
+            return f"{pdf_name} page {page_num + 1} is saved as image: {image_filename}\n"
         else:
             print(f"Conversion of page {page_num + 1} to image returned no images.")
             return ""
@@ -39,7 +39,7 @@ def extract_data_from_pdf(pdf_path, image_output_folder, min_text_length=100):
     full_text = []
     pdf_name = os.path.splitext(os.path.basename(pdf_path))[0]
     
-    print("Starting PDF text extraction...")
+    print("Starting PDF text extraction...\n")
     try:
         doc = fitz.open(pdf_path)
     except Exception as e:
@@ -54,7 +54,7 @@ def extract_data_from_pdf(pdf_path, image_output_folder, min_text_length=100):
 
         if len(text.strip()) > min_text_length:
             print(f"Page {page_num + 1}/{len(doc)}: Extracted text directly.")
-            full_text.append(text)
+            full_text.append(f"Page {page_num + 1}:\n{text}\n")
         else:
             # Option 2: OCR Extraction
             print(f"Page {page_num + 1}/{len(doc)}: Direct extraction insufficient, performing OCR...")
@@ -62,7 +62,7 @@ def extract_data_from_pdf(pdf_path, image_output_folder, min_text_length=100):
             ocr_text = extract_text_from_image(images, page_num)
             if len(ocr_text.strip()) > min_text_length:
                 print(f"Page {page_num + 1}/{len(doc)}: Extracted text via OCR.")
-                full_text.append(ocr_text)
+                full_text.append(f"Page {page_num + 1}:\n{ocr_text}\n")
             else:
                 # Option 3: Save as Image
                 print(f"Page {page_num + 1}/{len(doc)}: OCR extraction insufficient, saving page as image.")
@@ -73,19 +73,23 @@ def extract_data_from_pdf(pdf_path, image_output_folder, min_text_length=100):
     return "\n".join(full_text)
 
 if __name__ == "__main__":
-    PDF_FILE_NAME = "my_lecture.pdf"
+    PDF_FILE_NAME = "ComputerVision04.pdf"
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
     FILE_PATH = os.path.join(BASE_DIR, "source_pdfs", PDF_FILE_NAME)
 
-    OUTPUT_FOLDER_PATH = os.path.join(BASE_DIR, f"{os.path.splitext(PDF_FILE_NAME)[0]}_output")
-    
-    TXT_OUTPUT = os.path.join(OUTPUT_FOLDER_PATH, f"{os.path.splitext(PDF_FILE_NAME)[0]}_extracted.txt")
-    
-    IMAGE_OUTPUT_FOLDER = os.path.join(OUTPUT_FOLDER_PATH, "NonProcessablePages")
+    PARENT_OUTPUT_FOLDER = os.path.join(BASE_DIR, "extracted_outputs")
 
-    if not os.path.exists(OUTPUT_FOLDER_PATH):
-        os.makedirs(OUTPUT_FOLDER_PATH)
+    OUTPUT_FOLDER_CHILD = os.path.join(PARENT_OUTPUT_FOLDER, f"{os.path.splitext(PDF_FILE_NAME)[0]}_output")
+
+    TXT_OUTPUT = os.path.join(OUTPUT_FOLDER_CHILD, f"{os.path.splitext(PDF_FILE_NAME)[0]}_extracted.txt")
+
+    IMAGE_OUTPUT_FOLDER = os.path.join(OUTPUT_FOLDER_CHILD, "NonProcessablePages")
+
+    if not os.path.exists(PARENT_OUTPUT_FOLDER):
+        os.makedirs(PARENT_OUTPUT_FOLDER)
+    if not os.path.exists(OUTPUT_FOLDER_CHILD):
+        os.makedirs(OUTPUT_FOLDER_CHILD)
     if not os.path.exists(IMAGE_OUTPUT_FOLDER):
         os.makedirs(IMAGE_OUTPUT_FOLDER)
 
@@ -99,7 +103,7 @@ if __name__ == "__main__":
     if extracted_text:
         with open(TXT_OUTPUT, "w", encoding="utf-8") as f:
             f.write(extracted_text)
-        print(f"\nExtracted text and images saved to:\n{OUTPUT_FOLDER_PATH}")
+        print(f"\nExtracted text and images saved to:\n{OUTPUT_FOLDER_CHILD}")
     else:
         print("No text was extracted.")
 
