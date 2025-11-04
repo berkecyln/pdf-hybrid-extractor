@@ -86,6 +86,8 @@ if __name__ == "__main__":
 
     IMAGE_OUTPUT_FOLDER = os.path.join(OUTPUT_FOLDER_CHILD, "NonProcessablePages")
 
+    MIN_TEXT_LENGTH = 100  # Tune this based on your pdf file
+
     if not os.path.exists(PARENT_OUTPUT_FOLDER):
         os.makedirs(PARENT_OUTPUT_FOLDER)
     if not os.path.exists(OUTPUT_FOLDER_CHILD):
@@ -97,8 +99,8 @@ if __name__ == "__main__":
         print(f"Error: File not found at {FILE_PATH}")
         print(f"Please put '{PDF_FILE_NAME}' in the 'test_pdfs' folder.")
         sys.exit(1)
-    
-    extracted_text = extract_data_from_pdf(FILE_PATH, IMAGE_OUTPUT_FOLDER)
+
+    extracted_text = extract_data_from_pdf(FILE_PATH, IMAGE_OUTPUT_FOLDER, MIN_TEXT_LENGTH)
 
     if extracted_text:
         with open(TXT_OUTPUT, "w", encoding="utf-8") as f:

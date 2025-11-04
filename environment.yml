@@ -1,0 +1,13 @@
+name: pdf_extractor
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - poppler
+  - tesseract
+  - pdf2image
+  - pytesseract
+  - pip
+  - pip:
+    - pymupdf
