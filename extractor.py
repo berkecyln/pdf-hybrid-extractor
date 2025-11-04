@@ -73,7 +73,7 @@ def extract_data_from_pdf(pdf_path, image_output_folder, min_text_length=100):
     return "\n".join(full_text)
 
 if __name__ == "__main__":
-    PDF_FILE_NAME = "ComputerVision04.pdf"
+    PDF_FILE_NAME = "placeholder.pdf"
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
     FILE_PATH = os.path.join(BASE_DIR, "source_pdfs", PDF_FILE_NAME)
